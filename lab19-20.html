@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JS ЛР19-20: Хранение данных на клиенте</title>
   <style>
-    /* Здесь будет ваш CSS для стилизации */
     body {
       font-family: sans-serif;
       margin: 20px;
@@ -14,25 +13,273 @@
     h2 {
       margin-top: 20px;
     }
+
+    .product-list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .product-item {
+      width: 200px;
+      margin: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    .cart {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    .cart-item {
+      margin-bottom: 5px;
+    }
+
+    .form-container {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>JS ЛР19-20: Хранение данных на клиенте</h1>
 
   <h2>Задание №1: JSON и корзина Интернет-магазина</h2>
-  <p>Реализация корзины интернет-магазина с использованием JSON.</p>
-  <!-- Здесь будет ваш код для задания №1 -->
+  <div id="product-container">
+    <h2>Каталог товаров</h2>
+    <div id="product-list" class="product-list"></div>
+    <div id="cart" class="cart">
+      <h2>Корзина</h2>
+      <ul id="cart-items"></ul>
+      <p>Итого: <span id="cart-total">0</span> руб.</p>
+    </div>
+  </div>
 
-  <h2>Задание №2: Работа с COOKIE в JS</h2>
-  <p>Форма для ввода личных данных и сохранение в Cookie.</p>
-  <!-- Здесь будет ваш код для задания №2 -->
+    <h2>Задание №2: Работа с COOKIE в JS</h2>
+    <div class="form-container">
+        <h3>Личные данные</h3>
+        <form id="dataForm">
+            <label for="fio">ФИО:</label>
+            <input type="text" id="fio" name="fio"><br><br>
 
-  <h2>Задание №3: Работа с Local Storage в JS</h2>
-  <p>Форма для ввода личных данных и сохранение в Local Storage.</p>
-  <!-- Здесь будет ваш код для задания №3 -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email"><br><br>
+
+            <label for="birthdate">Дата рождения:</label>
+            <input type="date" id="birthdate" name="birthdate"><br><br>
+
+            <label for="birthplace">Место рождения:</label>
+            <input type="text" id="birthplace" name="birthplace"><br><br>
+
+            <label for="hobbies">Увлечения:</label>
+            <input type="text" id="hobbies" name="hobbies"><br><br>
+
+            <button type="button" onclick="saveToCookie()">Сохранить в Cookie</button>
+            <button type="button" onclick="getFromCookie()">Получить из Cookie</button>
+            <button type="button" onclick="clearCookie()">Очистить Cookie</button>
+        </form>
+    </div>
+
+    <h2>Задание №3: Работа с постоянным хранилищем Local Storage в JS</h2>
+    <div class="form-container">
+        <h3>Личные данные (Local Storage)</h3>
+        <form id="localStorageForm">
+            <label for="fio_ls">ФИО:</label>
+            <input type="text" id="fio_ls" name="fio"><br><br>
+
+            <label for="email_ls">Email:</label>
+            <input type="email" id="email_ls" name="email"><br><br>
+
+            <label for="birthdate_ls">Дата рождения:</label>
+            <input type="date" id="birthdate_ls" name="birthdate"><br><br>
+
+            <label for="birthplace_ls">Место рождения:</label>
+            <input type="text" id="birthplace_ls" name="birthplace"><br><br>
+
+            <label for="hobbies_ls">Увлечения:</label>
+            <input type="text" id="hobbies_ls" name="hobbies"><br><br>
+
+            <button type="button" onclick="saveToLocalStorage()">Сохранить в Local Storage</button>
+            <button type="button" onclick="getFromLocalStorage()">Получить из Local Storage</button>
+            <button type="button" onclick="clearLocalStorage()">Очистить Local Storage</button>
+        </form>
+    </div>
 
   <script>
-    // Здесь будет ваш JavaScript код
+    // Задание №1: JSON и корзина
+
+    // JSON-файл с данными (замените на свой)
+    const productsJSON = `
+[
+  { "id": 1, "name": "Товар 1", "price": 100, "image": "image1.jpg" },
+  { "id": 2, "name": "Товар 2", "price": 200, "image": "image2.jpg" },
+  { "id": 3, "name": "Товар 3", "price": 150, "image": "image3.jpg" },
+  { "id": 4, "name": "Товар 4", "price": 250, "image": "image4.jpg" },
+  { "id": 5, "name": "Товар 5", "price": 120, "image": "image5.jpg" },
+  { "id": 6, "name": "Товар 6", "price": 180, "image": "image6.jpg" },
+  { "id": 7, "name": "Товар 7", "price": 300, "image": "image7.jpg" },
+  { "id": 8, "name": "Товар 8", "price": 220, "image": "image8.jpg" },
+  { "id": 9, "name": "Товар 9", "price": 130, "image": "image9.jpg" },
+  { "id": 10, "name": "Товар 10", "price": 190, "image": "image10.jpg" }
+]
+`;
+
+    const products = JSON.parse(productsJSON);
+    const productList = document.getElementById('product-list');
+    const cartItemsList = document.getElementById('cart-items');
+    const cartTotalSpan = document.getElementById('cart-total');
+    let cart = [];
+
+    function renderProducts() {
+      products.forEach(product => {
+        const productItem = document.createElement('div');
+        productItem.classList.add('product-item');
+        productItem.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" width="100">
+          <h3>${product.name}</h3>
+          <p>${product.price} руб.</p>
+          <button onclick="addToCart(${product.id})">Добавить в корзину</button>
+        `;
+        productList.appendChild(productItem);
+      });
+    }
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        cart.push(product);
+        renderCart();
+        updateCartTotal();
+      }
+    }
+
+    function renderCart() {
+      cartItemsList.innerHTML = '';
+      cart.forEach((item, index) => {
+        const cartItem = document.createElement('li');
+        cartItem.classList.add('cart-item');
+        cartItem.innerHTML = `
+          ${item.name} - ${item.price} руб.
+          <button onclick="removeFromCart(${index})">Удалить</button>
+        `;
+        cartItemsList.appendChild(cartItem);
+      });
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+      updateCartTotal();
+    }
+
+    function updateCartTotal() {
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price;
+      });
+      cartTotalSpan.textContent = total;
+    }
+
+    renderProducts();
+
+    // Задание №2: Cookie
+    function saveToCookie() {
+        const fio = document.getElementById('fio').value;
+        const email = document.getElementById('email').value;
+        const birthdate = document.getElementById('birthdate').value;
+        const birthplace = document.getElementById('birthplace').value;
+        const hobbies = document.getElementById('hobbies').value;
+
+        document.cookie = `fio=${fio}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+        document.cookie = `email=${email}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+        document.cookie = `birthdate=${birthdate}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+        document.cookie = `birthplace=${birthplace}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+        document.cookie = `hobbies=${hobbies}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+
+        alert('Данные сохранены в Cookie!');
+    }
+
+    function getFromCookie() {
+        const fio = getCookie('fio');
+        const email = getCookie('email');
+        const birthdate = getCookie('birthdate');
+        const birthplace = getCookie('birthplace');
+        const hobbies = getCookie('hobbies');
+
+        document.getElementById('fio').value = fio || '';
+        document.getElementById('email').value = email || '';
+        document.getElementById('birthdate').value = birthdate || '';
+        document.getElementById('birthplace').value = birthplace || '';
+        document.getElementById('hobbies').value = hobbies || '';
+    }
+
+    function clearCookie() {
+        document.cookie = "fio=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "birthdate=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "birthplace=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie = "hobbies=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+        document.getElementById('fio').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('birthdate').value = '';
+        document.getElementById('birthplace').value = '';
+        document.getElementById('hobbies').value = '';
+
+        alert('Cookie очищены!');
+    }
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Задание №3: Local Storage
+    function saveToLocalStorage() {
+        const fio = document.getElementById('fio_ls').value;
+        const email = document.getElementById('email_ls').value;
+        const birthdate = document.getElementById('birthdate_ls').value;
+        const birthplace = document.getElementById('birthplace_ls').value;
+        const hobbies = document.getElementById('hobbies_ls').value;
+
+        localStorage.setItem('fio', fio);
+        localStorage.setItem('email', email);
+        localStorage.setItem('birthdate', birthdate);
+        localStorage.setItem('birthplace', birthplace);
+        localStorage.setItem('hobbies', hobbies);
+
+        alert('Данные сохранены в Local Storage!');
+    }
+
+    function getFromLocalStorage() {
+        const fio = localStorage.getItem('fio');
+        const email = localStorage.getItem('email');
+        const birthdate = localStorage.getItem('birthdate');
+        const birthplace = localStorage.getItem('birthplace');
+        const hobbies = localStorage.getItem('hobbies');
+
+        document.getElementById('fio_ls').value = fio || '';
+        document.getElementById('email_ls').value = email || '';
+        document.getElementById('birthdate_ls').value = birthdate || '';
+        document.getElementById('birthplace_ls').value = birthplace || '';
+        document.getElementById('hobbies_ls').value = hobbies || '';
+    }
+
+    function clearLocalStorage() {
+        localStorage.clear();
+
+        document.getElementById('fio_ls').value = '';
+        document.getElementById('email_ls').value = '';
+        document.getElementById('birthdate_ls').value = '';
+        document.getElementById('birthplace_ls').value = '';
+        document.getElementById('hobbies_ls').value = '';
+
+        alert('Local Storage очищен!');
+    }
   </script>
 </body>
 </html>
