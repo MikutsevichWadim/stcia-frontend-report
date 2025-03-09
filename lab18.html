@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЛР18: Обработка форм в JS + Валидация</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 300px;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>ЛР18: Обработка форм в JS + Валидация</h1>
+
+  <h2>Задание №1: Получение данных из полей пользовательских форм</h2>
+  <form id="myForm">
+    <label for="name">Имя:</label>
+    <input type="text" id="name" name="name"><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email"><br>
+
+    <label for="message">Сообщение:</label>
+    <textarea id="message" name="message"></textarea><br>
+
+    <label>Пол:</label>
+    <input type="radio" id="male" name="gender" value="male">
+    <label for="male">Мужской</label>
+    <input type="radio" id="female" name="gender" value="female">
+    <label for="female">Женский</label><br>
+
+    <label for="country">Страна:</label>
+    <select id="country" name="country">
+      <option value="russia">Россия</option>
+      <option value="usa">США</option>
+      <option value="canada">Канада</option>
+    </select><br>
+
+    <label for="agree">Согласен с условиями:</label>
+    <input type="checkbox" id="agree" name="agree"><br>
+
+    <button type="submit">Отправить</button>
+  </form>
+  <div id="output"></div>
+
+  <h2>Задание №2: Валидация пользовательских форм</h2>
+  <div id="validationOutput"></div>
+
+  <h2>Задание №3: Работа с объектом RegExp и регулярные выражения</h2>
+  <label for="regexpInput">Введите текст:</label>
+  <input type="text" id="regexpInput">
+  <button id="regexpButton">Проверить</button>
+  <div id="regexpOutput"></div>
+
+  <script>
+    // JavaScript код для обработки заданий
+    const form = document.getElementById('myForm');
+    const outputDiv = document.getElementById('output');
+    const validationOutputDiv = document.getElementById('validationOutput');
+    const regexpInput = document.getElementById('regexpInput');
+    const regexpButton = document.getElementById('regexpButton');
+    const regexpOutputDiv = document.getElementById('regexpOutput');
+
+    // Задание №1: Получение данных
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Предотвращаем отправку формы
+
+      const name = form.name.value;
+      const email = form.email.value;
+      const message = form.message.value;
+      const gender = document.querySelector('input[name="gender"]:checked')?.value || 'Не указан'; // Получаем значение выбранного radio button
+      const country = form.country.value;
+      const agree = form.agree.checked;
+
+      let outputText = `
+        Имя: ${name}<br>
+        Email: ${email}<br>
+        Сообщение: ${message}<br>
+        Пол: ${gender}<br>
+        Страна: ${country}<br>
+        Согласен с условиями: ${agree}
+      `;
+
+      outputDiv.innerHTML = outputText; // Вывод на страницу
+      //alert(outputText); // Вывод в диалоговое окно (можно закомментировать)
+    });
+
+    // Задание №2: Валидация
+    form.addEventListener('submit', function(event) {
+      //HTML5 validation example
+      if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+          form.classList.add('was-validated')
+      }
+      else {
+        // JS Validation example
+        validationOutputDiv.innerHTML = "";
+        let hasErrors = false;
+        const name = form.name.value;
+        const email = form.email.value;
+
+        if (name.length < 2) {
+          validationOutputDiv.innerHTML += "<div class='error'>Имя должно содержать не менее 2 символов.</div>";
+          hasErrors = true;
+        }
+
+        if (!email.includes('@')) {
+          validationOutputDiv.innerHTML += "<div class='error'>Некорректный email.</div>";
+          hasErrors = true;
+        }
+
+        if (hasErrors) {
+          event.preventDefault(); // Предотвращаем отправку формы, если есть ошибки
+        }
+      }
+    });
+
+    // Задание №3: RegExp
+    regexpButton.addEventListener('click', function() {
+      const inputText = regexpInput.value;
+      const pattern = /^[a-zA-Z]+$/; // Только буквы
+      const result = pattern.test(inputText);
+
+      if (result) {
+        regexpOutputDiv.textContent = 'Соответствует шаблону (только буквы).';
+      } else {
+        regexpOutputDiv.textContent = 'Не соответствует шаблону (только буквы).';
+      }
+    });
+  </script>
+</body>
+</html>

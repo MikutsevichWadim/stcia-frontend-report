@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Меню Лабораторных Работ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #lab-menu {
+      list-style: none;
+      padding: 0;
+      width: 80%;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #lab-menu li {
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    #lab-menu li:last-child {
+      border-bottom: none;
+    }
+
+    #lab-menu li a {
+      display: block;
+      text-decoration: none;
+      color: #007bff;
+      transition: color 0.3s ease;
+    }
+
+    #lab-menu li a:hover {
+      color: #0056b3;
+    }
+
+    .no-labs {
+      text-align: center;
+      font-style: italic;
+      color: #777;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Меню Лабораторных Работ</h1>
+
+  <ul id="lab-menu">
+  </ul>
+
+  <script>
+    function addLab(labName, labUrl) {
+      const labMenu = document.getElementById('lab-menu');
+      const noLabsMessage = document.querySelector('.no-labs');
+
+      //Удаление сообщения об отсутствии лабораторных работ
+      if (noLabsMessage) {
+        noLabsMessage.remove()
+      }
+
+      const newLab = document.createElement('li');
+      const labLink = document.createElement('a');
+      labLink.href = labUrl;
+      labLink.textContent = labName;
+      newLab.appendChild(labLink);
+      labMenu.appendChild(newLab);
+    }
+
+    // Добавляем лабораторную работу 18
+    addLab('ЛР18: Обработка форм в JS + Валидация', 'lab18.html');
+
+    // Добавляем лабораторную работу 19-20
+    addLab('JS ЛР19-20: Хранение данных на клиенте (JSON+COOKIE+WEB STORAGE)', 'lab19-20.html');
+
+    // Добавляем индивидуальное задание
+    addLab('Индивидуальное задание', 'idz.html');
+
+    // Добавляем сообщение об отсутсвии лабораторных работ, если их нет
+    const labMenu = document.getElementById('lab-menu');
+    if (labMenu.children.length === 0) {
+      const noLabsMessage = document.createElement('li');
+      noLabsMessage.classList.add('no-labs');
+      noLabsMessage.textContent = 'Здесь пока нет лабораторных работ.';
+      labMenu.appendChild(noLabsMessage);
+    }
+  </script>
+</body>
+</html>
