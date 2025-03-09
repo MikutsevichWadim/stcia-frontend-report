@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ЛР17: Обработка событий в JS</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ЛР17: Обработка событий в JS</h1>
+
+  <h2>События мыши</h2>
+  <button id="mouseButton">Наведи на меня</button>
+  <p id="mouseMessage"></p>
+
+  <h2>События клавиатуры</h2>
+  <input type="text" id="keyboardInput" placeholder="Введите текст">
+  <p id="keyboardMessage"></p>
+
+  <h2>Drag & Drop события</h2>
+  <div id="dragTarget" style="width:100px; height:100px; background-color:lightblue; margin-top: 10px;">Перетащи меня</div>
+  <div id="dropTarget" style="width:200px; height:100px; background-color:lightgreen; margin-top: 10px;">Отпусти здесь</div>
+
+  <h2>События указателя</h2>
+  <div id="pointerTarget" style="width:100px; height:100px; background-color:lightcoral; margin-top: 10px;">Коснись меня</div>
+  <p id="pointerMessage"></p>
+
+  <h2>События полосы прокрутки</h2>
+  <div style="height: 500px; overflow: auto;" id="scrollableDiv">
+    <p>Прокрутите меня...</p>
+    <p>Прокрутите меня...</p>
+    <p>Прокрутите меня...</p>
+    <p>Прокрутите меня...</p>
+    <p>Прокрутите меня...</p>
+    <p>Прокрутите меня...</p>
+  </div>
+  <p id="scrollMessage"></p>
+
+  <h2>События сенсорных экранов</h2>
+  <div id="touchTarget" style="width:100px; height:100px; background-color:lightyellow; margin-top: 10px;">Коснись меня</div>
+  <p id="touchMessage"></p>
+
+  <h2>События, связанные с таймером</h2>
+  <button id="timerButton">Запустить таймер</button>
+  <p id="timerMessage"></p>
+
+  <script>
+    // События мыши
+    const mouseButton = document.getElementById('mouseButton');
+    const mouseMessage = document.getElementById('mouseMessage');
+
+    mouseButton.addEventListener('mouseover', function() {
+      mouseMessage.textContent = 'Вы навели курсор на кнопку!';
+    });
+
+    mouseButton.addEventListener('mouseout', function() {
+      mouseMessage.textContent = '';
+    });
+
+    // События клавиатуры
+    const keyboardInput = document.getElementById('keyboardInput');
+    const keyboardMessage = document.getElementById('keyboardMessage');
+
+    keyboardInput.addEventListener('keydown', function(event) {
+      keyboardMessage.textContent = 'Вы нажали клавишу: ' + event.key;
+    });
+
+    // Drag & Drop события
+    const dragTarget = document.getElementById('dragTarget');
+    const dropTarget = document.getElementById('dropTarget');
+
+    dragTarget.addEventListener('dragstart', function(event) {
+      event.dataTransfer.setData("text", event.target.id);
+    });
+
+    dropTarget.addEventListener('dragover', function(event) {
+      event.preventDefault();
+    });
+
+    dropTarget.addEventListener('drop', function(event) {
+      event.preventDefault();
+      const data = event.dataTransfer.getData("text");
+      dropTarget.appendChild(document.getElementById(data));
+    });
+
+    // События указателя
+    const pointerTarget = document.getElementById('pointerTarget');
+    const pointerMessage = document.getElementById('pointerMessage');
+
+    pointerTarget.addEventListener('pointerdown', function() {
+      pointerMessage.textContent = 'Указатель коснулся элемента!';
+    });
+
+    pointerTarget.addEventListener('pointerup', function() {
+      pointerMessage.textContent = 'Указатель отпущен!';
+    });
+
+    // События полосы прокрутки
+    const scrollableDiv = document.getElementById('scrollableDiv');
+    const scrollMessage = document.getElementById('scrollMessage');
+
+    scrollableDiv.addEventListener('scroll', function() {
+      scrollMessage.textContent = 'Вы прокрутили страницу!';
+    });
+
+    // События сенсорных экранов
+    const touchTarget = document.getElementById('touchTarget');
+    const touchMessage = document.getElementById('touchMessage');
+
+    touchTarget.addEventListener('touchstart', function() {
+      touchMessage.textContent = 'Вы коснулись элемента!';
+    });
+
+    touchTarget.addEventListener('touchend', function() {
+      touchMessage.textContent = 'Вы отпустили элемент!';
+    });
+
+    // События, связанные с таймером
+    const timerButton = document.getElementById('timerButton');
+    const timerMessage = document.getElementById('timerMessage');
+
+    timerButton.addEventListener('click', function() {
+      timerMessage.textContent = 'Таймер запущен!';
+      setTimeout(function() {
+        timerMessage.textContent = 'Время вышло!';
+      }, 3000); // 3 секунды
+    });
+  </script>
+</body>
+</html>
